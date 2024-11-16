@@ -1,26 +1,33 @@
 package backend.academy.file;
 
-import backend.academy.statistics.LogRecord;
+import backend.academy.filter.LogFilter;
+import backend.academy.parser.LogParser;
+import backend.academy.parser.LogRecord;
 import backend.academy.statistics.LogStatistics;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Optional;
 
 public abstract class DataReader {
 
-    protected abstract BufferedReader getReader() throws IOException;
+    public abstract BufferedReader createReader() throws IOException;
 
-    public LogStatistics read() {
-        LogStatistics statistics = new LogStatistics();
-        try (BufferedReader in = getReader()) {
+    public abstract String getSource();
+
+    public LogStatistics read(LogFilter filter) {
+        LogStatistics statistics = new LogStatistics(filter, getSource());
+        try (BufferedReader in = createReader()) {
             String line;
             while ((line = in.readLine()) != null) {
-                Optional<LogRecord> optionalRecord = LogRecord.fromLogLine(line);
+                Optional<LogRecord> optionalRecord = LogParser.fromLogLine(line);
 
                 if (optionalRecord.isEmpty()) continue;
 
                 LogRecord record = optionalRecord.get();
-                statistics.update(record);
+                if (filter.matches(record)) {
+                    statistics.update(record);
+                }
             }
         } catch (IOException e) {
             System.err.println(" ! Ошибка при чтении данных: " + e.getMessage());
@@ -28,3 +35,4 @@ public abstract class DataReader {
         return statistics;
     }
 }
+
