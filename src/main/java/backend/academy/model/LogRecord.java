@@ -1,4 +1,4 @@
-package backend.academy.parser;
+package backend.academy.model;
 
 import java.time.LocalDateTime;
 

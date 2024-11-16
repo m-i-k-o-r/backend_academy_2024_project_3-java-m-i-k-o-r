@@ -1,6 +1,6 @@
 package backend.academy.filter;
 
-import backend.academy.parser.LogRecord;
+import backend.academy.model.LogRecord;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.EnumMap;

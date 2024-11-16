@@ -1,6 +1,6 @@
-package backend.academy.statistics;
+package backend.academy.statistics.metrics;
 
-import backend.academy.parser.LogRecord;
+import backend.academy.model.LogRecord;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

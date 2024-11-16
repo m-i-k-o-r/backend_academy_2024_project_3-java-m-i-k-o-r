@@ -1,4 +1,4 @@
-package backend.academy.file;
+package backend.academy.source.discovery;
 
 import java.net.MalformedURLException;
 import java.net.URI;

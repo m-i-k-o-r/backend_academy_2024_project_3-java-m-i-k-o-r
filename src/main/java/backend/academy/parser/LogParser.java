@@ -1,5 +1,7 @@
 package backend.academy.parser;
 
+import backend.academy.model.HttpRequest;
+import backend.academy.model.LogRecord;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -22,14 +24,14 @@ public class LogParser {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z");
 
-    public static Optional<LogRecord> fromLogLine(String logLine) {
+    public static Optional<LogRecord> parseLogLine(String logLine) {
         Matcher matcher = LOG_PATTERN.matcher(logLine);
         if (!matcher.matches()) {
             System.err.println(" ! Строка лога не соответствует ожидаемому формату: " + logLine);
             return Optional.empty();
         }
 
-        Optional<HttpRequest> request = parseRequest(matcher.group("request"));
+        Optional<HttpRequest> request = parseHttpRequest(matcher.group("request"));
         if (request.isEmpty()) {
             System.err.println(" ! Некорректный запрос в строке лога: " + matcher.group("request"));
             return Optional.empty();
@@ -47,7 +49,7 @@ public class LogParser {
         ));
     }
 
-    public static Optional<HttpRequest> parseRequest(String requestString) {
+    public static Optional<HttpRequest> parseHttpRequest(String requestString) {
         Matcher matcher = REQUEST_PATTERN.matcher(requestString);
         if (!matcher.matches()) {
             System.err.println(" ! Некорректный формат запроса: " + requestString);

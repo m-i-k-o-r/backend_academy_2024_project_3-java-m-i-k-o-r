@@ -1,4 +1,4 @@
-package backend.academy.file;
+package backend.academy.source.discovery;
 
 import java.io.IOException;
 import java.nio.file.*;

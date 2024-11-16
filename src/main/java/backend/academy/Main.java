@@ -1,10 +1,10 @@
 package backend.academy;
 
-import backend.academy.file.DataReader;
-import backend.academy.file.FileDataReader;
-import backend.academy.file.FileFinder;
-import backend.academy.file.InputTypeDetector;
-import backend.academy.file.UrlDataReader;
+import backend.academy.source.file.DataReader;
+import backend.academy.source.file.FileDataReader;
+import backend.academy.source.discovery.FileFinder;
+import backend.academy.source.discovery.InputTypeDetector;
+import backend.academy.source.file.UrlDataReader;
 import backend.academy.filter.LogFilter;
 import backend.academy.statistics.LogStatistics;
 import java.io.IOException;

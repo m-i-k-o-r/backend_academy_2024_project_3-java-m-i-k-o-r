@@ -1,4 +1,4 @@
-package backend.academy.file;
+package backend.academy.source.file;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,8 +1,8 @@
-package backend.academy.file;
+package backend.academy.source.file;
 
 import backend.academy.filter.LogFilter;
 import backend.academy.parser.LogParser;
-import backend.academy.parser.LogRecord;
+import backend.academy.model.LogRecord;
 import backend.academy.statistics.LogStatistics;
 
 import java.io.BufferedReader;
@@ -20,7 +20,7 @@ public abstract class DataReader {
         try (BufferedReader in = createReader()) {
             String line;
             while ((line = in.readLine()) != null) {
-                Optional<LogRecord> optionalRecord = LogParser.fromLogLine(line);
+                Optional<LogRecord> optionalRecord = LogParser.parseLogLine(line);
 
                 if (optionalRecord.isEmpty()) continue;
 

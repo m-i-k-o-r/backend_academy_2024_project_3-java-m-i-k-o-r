@@ -1,6 +1,6 @@
-package backend.academy.statistics;
+package backend.academy.statistics.metrics;
 
-import backend.academy.parser.LogRecord;
+import backend.academy.model.LogRecord;
 import com.google.common.math.Quantiles;
 import java.util.ArrayList;
 import java.util.List;

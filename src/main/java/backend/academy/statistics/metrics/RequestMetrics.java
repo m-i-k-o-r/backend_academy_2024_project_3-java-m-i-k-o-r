@@ -1,6 +1,6 @@
-package backend.academy.statistics;
+package backend.academy.statistics.metrics;
 
-import backend.academy.parser.LogRecord;
+import backend.academy.model.LogRecord;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
