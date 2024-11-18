@@ -12,9 +12,9 @@ import backend.academy.statistics.metrics.TimeMetric;
 import backend.academy.statistics.metrics.UserActivityMetric;
 import lombok.Getter;
 
+@Getter
 public class LogStatistics {
-    @Getter
-    private String source = "not name";
+    private final String source;
     private final Map<Class<? extends Metric>, Metric> metrics = new HashMap<>();
     private final LogFilter filters;
 
@@ -36,5 +36,9 @@ public class LogStatistics {
         for (Metric metric : metrics.values()) {
             metric.update(entry);
         }
+    }
+
+    public <T extends Metric> T getMetric(Class<T> metricClass) {
+        return metricClass.cast(metrics.get(metricClass));
     }
 }

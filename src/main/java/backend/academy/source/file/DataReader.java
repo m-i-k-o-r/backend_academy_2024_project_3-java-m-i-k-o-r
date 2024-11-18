@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public abstract class DataReader {
 
-    public abstract BufferedReader createReader() throws IOException;
+    protected abstract BufferedReader createReader() throws IOException;
 
     public abstract String getSource();
 
@@ -22,7 +22,9 @@ public abstract class DataReader {
             while ((line = in.readLine()) != null) {
                 Optional<LogRecord> optionalRecord = LogParser.parseLogLine(line);
 
-                if (optionalRecord.isEmpty()) continue;
+                if (optionalRecord.isEmpty()) {
+                    continue;
+                }
 
                 LogRecord record = optionalRecord.get();
                 if (filter.matches(record)) {

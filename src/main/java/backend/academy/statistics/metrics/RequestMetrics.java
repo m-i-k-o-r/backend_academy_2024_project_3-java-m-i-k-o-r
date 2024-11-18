@@ -30,6 +30,14 @@ public class RequestMetrics implements Metric {
     }
 
     public Map<String, Integer> getMethodFrequency() {
-        return methodFrequency;
+        return methodFrequency.entrySet()
+            .stream()
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (existing, replacement) -> existing,
+                LinkedHashMap::new
+            ));
     }
 }

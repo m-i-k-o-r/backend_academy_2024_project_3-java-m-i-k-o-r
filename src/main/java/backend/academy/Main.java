@@ -1,15 +1,19 @@
 package backend.academy;
 
-import backend.academy.source.file.DataReader;
-import backend.academy.source.file.FileDataReader;
+import backend.academy.filter.LogFilter;
+import backend.academy.report.AsciiDocReportGenerator;
+import backend.academy.report.MarkdownReportGenerator;
 import backend.academy.source.discovery.FileFinder;
 import backend.academy.source.discovery.InputTypeDetector;
+import backend.academy.source.file.DataReader;
+import backend.academy.source.file.FileDataReader;
 import backend.academy.source.file.UrlDataReader;
-import backend.academy.filter.LogFilter;
 import backend.academy.statistics.LogStatistics;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.experimental.UtilityClass;
@@ -51,6 +55,19 @@ public class Main {
         List<LogStatistics> statistics = new ArrayList<>();
         for (DataReader dataReader : dataReaderList) {
             statistics.add(dataReader.read(filters));
+        }
+
+        for (LogStatistics statistic : statistics) {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM_HH-mm-ss-SSS"));
+
+            String reportFileName;
+            if (true) {
+                reportFileName = "report_" + timestamp + ".md";
+                new MarkdownReportGenerator().generateReport(reportFileName, statistic);
+            } else {
+                reportFileName = "report_" + timestamp + ".adoc";
+                new AsciiDocReportGenerator().generateReport(reportFileName, statistic);
+            }
         }
     }
 }

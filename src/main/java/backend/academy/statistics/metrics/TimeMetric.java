@@ -1,6 +1,7 @@
 package backend.academy.statistics.metrics;
 
 import backend.academy.model.LogRecord;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -25,6 +26,8 @@ public class TimeMetric implements Metric {
 
         if (isErrorStatus(log.status())) {
             hourlyErrorCount.merge(hour, 1, Integer::sum);
+        } else {
+            hourlyErrorCount.merge(hour, 0, Integer::sum);
         }
     }
 
@@ -59,5 +62,24 @@ public class TimeMetric implements Metric {
 
     public Map<LocalDateTime, Integer> getHourlyErrorCountByDate(LocalDate date) {
         return getHourlyCountByDate(hourlyErrorCount, date);
+    }
+
+    public double calculateCorrelation(LocalDate date) {
+        Map<LocalDateTime, Integer> requestMap = getHourlyRequestCountByDate(date);
+        Map<LocalDateTime, Integer> errorMap = getHourlyErrorCountByDate(date);
+
+        double[] requestArray = requestMap.values().stream()
+            .mapToDouble(Integer::doubleValue)
+            .toArray();
+
+        double[] errorArray = errorMap.values().stream()
+            .mapToDouble(Integer::doubleValue)
+            .toArray();
+
+        if (requestArray.length != errorArray.length || requestArray.length == 0) {
+            return 0;
+        }
+
+        return new PearsonsCorrelation().correlation(requestArray, errorArray);
     }
 }
