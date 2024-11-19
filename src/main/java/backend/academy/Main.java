@@ -1,5 +1,7 @@
 package backend.academy;
 
+import backend.academy.cli.CliParams;
+import backend.academy.cli.CliParser;
 import backend.academy.filter.LogFilter;
 import backend.academy.report.AsciiDocReportGenerator;
 import backend.academy.report.MarkdownReportGenerator;
@@ -25,21 +27,21 @@ public class Main {
 
         // String input = "./**.md";
         // String input = "C:/Users/korol/Desktop/lol/New Text Document.txt";
+        // String input = "https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%20Formats/nginx_logs/nginx_logs";
 
-        String input = "https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%20Formats/nginx_logs/nginx_logs";
+        CliParser cliParser = new CliParser();
+        cliParser.parseArgs(args);
 
-        List<String> inputs = new ArrayList<>();
+        CliParams params = cliParser.cliParams();
+
         List<DataReader> dataReaderList = new ArrayList<>();
-        inputs.add(input);
 
-        for (String s : inputs) {
+        for (String s : params.paths()) {
             switch (InputTypeDetector.identify(s)) {
                 case URL:
-                    System.out.println("Обнаружен URL");
                     dataReaderList.add(new UrlDataReader(URI.create(s).toURL()));
                     break;
                 case PATH:
-                    System.out.println("Обнаружен путь с glob-шаблоном");
                     List<Path> matchedPaths = FileFinder.findPaths(s);
                     for (Path p : matchedPaths) {
                         dataReaderList.add(new FileDataReader(p));
@@ -60,12 +62,12 @@ public class Main {
         for (LogStatistics statistic : statistics) {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM_HH-mm-ss-SSS"));
 
-            String reportFileName;
-            if (true) {
-                reportFileName = "report_" + timestamp + ".md";
+            String reportFileName = "report_";
+            if (params.format().equals("markdown")) {
+                reportFileName = reportFileName + timestamp + ".md";
                 new MarkdownReportGenerator().generateReport(reportFileName, statistic);
-            } else {
-                reportFileName = "report_" + timestamp + ".adoc";
+            } else if (params.format().equals("adoc")) {
+                reportFileName = reportFileName + timestamp + ".adoc";
                 new AsciiDocReportGenerator().generateReport(reportFileName, statistic);
             }
         }
