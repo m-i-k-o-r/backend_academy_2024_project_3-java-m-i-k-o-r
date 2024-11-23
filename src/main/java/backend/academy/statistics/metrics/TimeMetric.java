@@ -1,7 +1,6 @@
 package backend.academy.statistics.metrics;
 
 import backend.academy.model.LogRecord;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -9,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 public class TimeMetric implements Metric {
     private final Map<LocalDateTime, Integer> hourlyRequestCount = new HashMap<>();

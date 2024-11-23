@@ -1,10 +1,9 @@
 package backend.academy.source.file;
 
 import backend.academy.filter.LogFilter;
-import backend.academy.parser.LogParser;
 import backend.academy.model.LogRecord;
+import backend.academy.parser.LogParser;
 import backend.academy.statistics.LogStatistics;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Optional;
@@ -37,4 +36,3 @@ public abstract class DataReader {
         return statistics;
     }
 }
-

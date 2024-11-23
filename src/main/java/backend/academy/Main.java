@@ -2,6 +2,7 @@ package backend.academy;
 
 import backend.academy.cli.CliParams;
 import backend.academy.cli.CliParser;
+import backend.academy.filter.FilterField;
 import backend.academy.filter.LogFilter;
 import backend.academy.report.AsciiDocReportGenerator;
 import backend.academy.report.MarkdownReportGenerator;
@@ -54,6 +55,19 @@ public class Main {
         }
 
         LogFilter filters = new LogFilter();
+
+        List<String> fields = params.filterFields();
+        List<String> values = params.filterValues();
+
+        if (fields != null && values != null) {
+            for (int i = 0; i < fields.size(); i++) {
+                filters.addFilter(fields.get(i), values.get(i));
+            }
+        }
+
+        addDateFilter(filters, FilterField.TO, params.to());
+        addDateFilter(filters, FilterField.FROM, params.from());
+
         List<LogStatistics> statistics = new ArrayList<>();
         for (DataReader dataReader : dataReaderList) {
             statistics.add(dataReader.read(filters));
@@ -70,6 +84,12 @@ public class Main {
                 reportFileName = reportFileName + timestamp + ".adoc";
                 new AsciiDocReportGenerator().generateReport(reportFileName, statistic);
             }
+        }
+    }
+
+    private void addDateFilter(LogFilter filters, FilterField field, LocalDateTime date) {
+        if (date != null) {
+            filters.addFilter(String.valueOf(field), date);
         }
     }
 }

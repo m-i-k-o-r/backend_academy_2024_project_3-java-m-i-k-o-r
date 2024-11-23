@@ -1,7 +1,12 @@
 package backend.academy.cli;
 
 import com.beust.jcommander.IParameterValidator;
+import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,11 +17,11 @@ public class CliParams {
     @Parameter(names = "--path", required = true, variableArity = true)
     private List<String> paths;
 
-    @Parameter(names = "--from")
-    private String from;
+    @Parameter(names = "--from", converter = LocalDateTimeConverter.class)
+    private LocalDateTime from;
 
-    @Parameter(names = "--to")
-    private String to;
+    @Parameter(names = "--to", converter = LocalDateTimeConverter.class)
+    private LocalDateTime to;
 
     @Parameter(names = "--format", validateWith = FormatValidator.class)
     private String format = "markdown";
@@ -33,7 +38,25 @@ public class CliParams {
         @Override
         public void validate(String name, String value) throws IllegalArgumentException {
             if (!ALLOWED_FORMATS.contains(value)) {
-                throw new IllegalArgumentException("Неверный формат. Форматы доступные для выбора: " + ALLOWED_FORMATS);
+                throw new IllegalArgumentException(
+                    " ! Неверный формат вывода результата. Доступные форматы: " + ALLOWED_FORMATS);
+            }
+        }
+    }
+
+    public static class LocalDateTimeConverter implements IStringConverter<LocalDateTime> {
+
+        @Override
+        public LocalDateTime convert(String value) {
+            try {
+                return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            } catch (DateTimeParseException e) {
+                try {
+                    LocalDate date = LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE);
+                    return date.atStartOfDay();
+                } catch (DateTimeParseException ex) {
+                    throw new IllegalArgumentException(" ! Некорректный формат даты: " + value, ex);
+                }
             }
         }
     }

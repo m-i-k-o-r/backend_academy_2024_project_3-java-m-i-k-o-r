@@ -2,14 +2,14 @@ package backend.academy.statistics;
 
 import backend.academy.filter.LogFilter;
 import backend.academy.model.LogRecord;
-import java.util.HashMap;
-import java.util.Map;
 import backend.academy.statistics.metrics.BasicMetrics;
 import backend.academy.statistics.metrics.Metric;
 import backend.academy.statistics.metrics.RequestMetrics;
 import backend.academy.statistics.metrics.ResponseMetric;
 import backend.academy.statistics.metrics.TimeMetric;
 import backend.academy.statistics.metrics.UserActivityMetric;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Getter;
 
 @Getter
