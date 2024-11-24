@@ -37,8 +37,7 @@ public class FileFinder {
                 }
             });
         } catch (IOException e) {
-            System.err.println(" ! Ошибка при обходе дерева файлов: " + e.getMessage());
-            return new ArrayList<>();
+            throw new IllegalArgumentException("Ошибка при обходе дерева файлов: " + e.getMessage());
         }
 
         return matchedPaths;

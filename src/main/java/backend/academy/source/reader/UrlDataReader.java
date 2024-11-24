@@ -1,4 +1,4 @@
-package backend.academy.source.file;
+package backend.academy.source.reader;
 
 import java.io.BufferedReader;
 import java.io.IOException;

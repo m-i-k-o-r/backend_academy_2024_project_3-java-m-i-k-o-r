@@ -16,9 +16,17 @@ public class StringFilterStrategy implements LogFilterStrategy<String> {
         try {
             pattern = Pattern.compile(value);
         } catch (PatternSyntaxException e) {
-            throw new IllegalArgumentException(" ! Некорректное регулярное выражение: " + value, e);
+            throw new IllegalArgumentException("Некорректное регулярное выражение: " + value, e);
         }
-        return logRecord -> pattern.matcher(getFieldValue(logRecord)).matches();
+
+        return logRecord -> {
+            try {
+                String valueRecord = getFieldValue(logRecord);
+                return pattern.matcher(valueRecord).matches();
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+        };
     }
 
     private String getFieldValue(LogRecord logRecord) {
@@ -27,7 +35,7 @@ public class StringFilterStrategy implements LogFilterStrategy<String> {
             case METHOD -> logRecord.request().method();
             case STATUS -> String.valueOf(logRecord.status());
             case AGENT -> logRecord.httpUserAgent();
-            default -> throw new IllegalArgumentException(" ! Неизвестное поле для фильтрации: " + field);
+            default -> throw new IllegalArgumentException("Неизвестное поле для фильтрации: " + field);
         };
     }
 }

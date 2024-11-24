@@ -3,7 +3,7 @@ package backend.academy.filter;
 import lombok.Getter;
 
 @Getter
-    public enum FilterField {
+public enum FilterField {
     FROM("Начальная дата"),
     TO("Конечная дата"),
     ADDRESS("IP адрес"),

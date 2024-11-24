@@ -2,12 +2,17 @@ package backend.academy.cli;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import java.util.Collections;
 import lombok.Getter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CliParser {
     @Getter
     private final CliParams cliParams;
     private final JCommander jCommander;
+
+    private static final Logger logger = LogManager.getLogger(CliParser.class);
 
     public CliParser() {
         this.cliParams = new CliParams();
@@ -16,15 +21,18 @@ public class CliParser {
             .build();
     }
 
-    public void parseArgs(String[] args) {
+    public CliParams parse(String[] args) {
         try {
             jCommander.parse(args);
             validateFilters();
         } catch (ParameterException e) {
-            System.err.println(e.getMessage());
+            logger.warn("Ошибка при парсинге: {}", e.getMessage());
+            logger.debug(e);
+
             printUsage();
             System.exit(1);
         }
+        return cliParams;
     }
 
     private void validateFilters() {
@@ -32,18 +40,15 @@ public class CliParser {
             return;
         }
 
-        if ((cliParams.filterFields() != null && cliParams.filterValues() == null) ||
-            (cliParams.filterFields() == null && cliParams.filterValues() != null)) {
-            throw new ParameterException(
-                "Размер массива полей и массива значений для фильтрации не совпадают"
-            );
-        }
+        if ((cliParams.filterFields() == null || cliParams.filterValues() == null)
+            || (cliParams.filterFields().size() != cliParams.filterValues().size())) {
 
-        if (cliParams.filterFields().size() != cliParams.filterValues().size()) {
-            throw new ParameterException(
-                "Размер массива полей и массива значений для фильтрации не совпадают. "
-                    + "Поля: " + cliParams.filterFields() + ", Значения: " + cliParams.filterValues()
-            );
+            logger.error("Все фильтры были сброшены и заменены на пустые");
+            logger.warn("Размеры массивов filterFields и filterValues не совпадают. "
+                + "filterFields: {}, filterValues: {}", cliParams.filterFields(), cliParams.filterValues());
+
+            cliParams.filterFields(Collections.emptyList());
+            cliParams.filterValues(Collections.emptyList());
         }
     }
 

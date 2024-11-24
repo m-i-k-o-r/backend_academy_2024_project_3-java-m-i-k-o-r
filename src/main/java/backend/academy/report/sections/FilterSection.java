@@ -21,7 +21,7 @@ public class FilterSection extends Section {
         LogFilter logFilter = statistics.filters();
 
         if (logFilter.filterValues().isEmpty()) {
-            return List.of();
+            return List.of(List.of("-", "-"));
         }
 
         return logFilter.filterValues().entrySet().stream()

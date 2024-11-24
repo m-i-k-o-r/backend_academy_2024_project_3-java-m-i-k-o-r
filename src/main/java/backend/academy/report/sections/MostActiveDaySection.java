@@ -17,6 +17,20 @@ public class MostActiveDaySection extends Section {
     }
 
     @Override
+    protected List<List<String>> prepareInfo(LogStatistics statistics) {
+        TimeMetric metric = statistics.getMetric(TimeMetric.class);
+        LocalDate mostActiveDay = metric.getDayWithMostRequests();
+        if (mostActiveDay == null) {
+            return List.of();
+        }
+
+        return List.of(
+            List.of("День с наибольшей активностью", mostActiveDay.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"))),
+            List.of("Корреляция", Formatter.formatNum(metric.calculateCorrelation(mostActiveDay)))
+        );
+    }
+
+    @Override
     protected List<String> getTableHeaders() {
         return List.of("Время", "Req", "Request (chart)", "Err", "Error (chart)", "Err (%)");
     }
@@ -27,7 +41,7 @@ public class MostActiveDaySection extends Section {
 
         LocalDate mostActiveDay = metric.getDayWithMostRequests();
         if (mostActiveDay == null) {
-            return List.of();
+            return List.of(List.of("-", "-", "-", "-", "-", "-"));
         }
 
         Map<LocalDateTime, Integer> hourlyRequests = metric.getHourlyRequestCountByDate(mostActiveDay);
@@ -65,19 +79,5 @@ public class MostActiveDaySection extends Section {
         }
         int length = (int) Math.round((double) value / max * 20);
         return "█".repeat(length) + "░".repeat(20 - length);
-    }
-
-    @Override
-    protected List<List<String>> prepareInfo(LogStatistics statistics) {
-        TimeMetric metric = statistics.getMetric(TimeMetric.class);
-        LocalDate mostActiveDay = metric.getDayWithMostRequests();
-        if (mostActiveDay == null) {
-            return List.of();
-        }
-
-        return List.of(
-            List.of("День с наибольшей активностью", mostActiveDay.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"))),
-            List.of("Корреляция", Formatter.formatNum(metric.calculateCorrelation(mostActiveDay)))
-        );
     }
 }

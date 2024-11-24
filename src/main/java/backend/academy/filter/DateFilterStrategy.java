@@ -12,7 +12,7 @@ public class DateFilterStrategy implements LogFilterStrategy<LocalDateTime> {
     @Override
     public Predicate<LogRecord> createPredicate(LocalDateTime dateTime) {
         if (field != FilterField.FROM && field != FilterField.TO) {
-            throw new IllegalArgumentException("! Фильтр по дате доступен только для полей 'FROM' и 'TO'");
+            throw new IllegalArgumentException("Фильтр по дате доступен только для полей 'FROM' и 'TO'");
         }
 
         return logRecord ->

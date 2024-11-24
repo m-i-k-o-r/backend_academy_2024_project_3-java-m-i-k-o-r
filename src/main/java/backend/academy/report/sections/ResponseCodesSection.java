@@ -46,17 +46,18 @@ public class ResponseCodesSection extends Section {
     }
 
     private static class HttpStatus {
-        private static final Map<Integer, String> STATUS_NAMES = Map.of(
-            200, "OK",
-            201, "Created",
-            301, "Moved Permanently",
-            302, "Found",
-            400, "Bad Request",
-            401, "Unauthorized",
-            403, "Forbidden",
-            404, "Not Found",
-            500, "Internal Server Error",
-            503, "Service Unavailable"
+        private static final Map<Integer, String> STATUS_NAMES = Map.ofEntries(
+            Map.entry(200, "OK"),
+            Map.entry(201, "Created"),
+            Map.entry(301, "Moved Permanently"),
+            Map.entry(302, "Found"),
+            Map.entry(304, "Not Modified"),
+            Map.entry(400, "Bad Request"),
+            Map.entry(401, "Unauthorized"),
+            Map.entry(403, "Forbidden"),
+            Map.entry(404, "Not Found"),
+            Map.entry(500, "Internal Server Error"),
+            Map.entry(503, "Service Unavailable")
         );
 
         public static String getName(int code) {

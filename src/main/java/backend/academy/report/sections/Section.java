@@ -13,7 +13,7 @@ public abstract class Section {
         generator.writeHeader(writer, getHeader());
 
         for (List<String> row : prepareInfo(statistics)) {
-            generator.writeLine(writer, listToArray(row));
+            generator.writeInfo(writer, listToArray(row));
         }
 
         generator.writeTableHeader(writer, listToArray(getTableHeaders()));
@@ -33,7 +33,7 @@ public abstract class Section {
 
     protected List<List<String>> prepareInfo(LogStatistics statistics) {
         return List.of();
-    };
+    }
 
     private String[] listToArray(List<String> list) {
         return list.toArray(new String[0]);

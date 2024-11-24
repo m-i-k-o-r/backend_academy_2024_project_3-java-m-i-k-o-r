@@ -16,8 +16,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public abstract class ReportGenerator {
+    private static final Logger logger = LogManager.getLogger(ReportGenerator.class);
+
     private final List<Section> sections = List.of(
         new GeneralInfoSection(),
         new FilterSection(),
@@ -28,19 +32,22 @@ public abstract class ReportGenerator {
         new MostActiveDaySection()
     );
 
-    public void generateReport(String filename, LogStatistics statistics) {
+    public void generateReport(String filename, LogStatistics statistics) throws IllegalAccessException {
         try (BufferedWriter writer = Files.newBufferedWriter(Path.of(filename), StandardCharsets.UTF_8)) {
             for (Section section : sections) {
                 section.write(writer, statistics, this);
             }
+            logger.info("Создание отчета успешно завершено. "
+                + "Файл: '{}', Источник: {}", filename, statistics.source());
         } catch (IOException e) {
-            System.err.println("Ошибка при создании отчета: " + e.getMessage());
+            logger.error("Ошибка при создании отчета: {} Произошла ошибка: {}", filename, e.getMessage());
+            logger.debug("Детали исключения:", e);
         }
     }
 
     public abstract void writeHeader(BufferedWriter writer, String header) throws IOException;
 
-    public void writeLine(BufferedWriter writer, String... headers) throws IOException {
+    public void writeInfo(BufferedWriter writer, String... headers) throws IOException {
         if (headers.length >= 2) {
             String value = String.join(", ", Arrays.copyOfRange(headers, 1, headers.length));
             writer.write(String.format("**%s**: %s\n\n", headers[0], value));

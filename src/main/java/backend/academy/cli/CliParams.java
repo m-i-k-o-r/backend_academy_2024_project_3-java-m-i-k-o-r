@@ -1,6 +1,5 @@
 package backend.academy.cli;
 
-import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
 import java.time.LocalDate;
@@ -9,37 +8,60 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Getter
 @ToString
 public class CliParams {
-    @Parameter(names = "--path", required = true, variableArity = true)
+    private static final Logger logger = LogManager.getLogger(CliParams.class);
+
+    @Parameter(names = "--path",
+        required = true,
+        variableArity = true,
+        description = "Путь к log-файлам или URL")
     private List<String> paths;
 
-    @Parameter(names = "--from", converter = LocalDateTimeConverter.class)
+    @Parameter(names = "--from",
+        converter = LocalDateTimeConverter.class,
+        description = "Начальная дата/время (в формате ISO 8601)")
     private LocalDateTime from;
 
-    @Parameter(names = "--to", converter = LocalDateTimeConverter.class)
+    @Parameter(names = "--to",
+        converter = LocalDateTimeConverter.class,
+        description = "Конечная дата/время (в формате ISO 8601)")
     private LocalDateTime to;
 
-    @Parameter(names = "--format", validateWith = FormatValidator.class)
-    private String format = "markdown";
+    @Parameter(names = "--format",
+        converter = FormatConverter.class,
+        description = "Формат вывода результата")
+    private Format format = Format.MARKDOWN;
 
-    @Parameter(names = "--filter-field", variableArity = true)
+    @Setter
+    @Parameter(names = "--filter-field",
+        variableArity = true,
+        description = "Список полей для фильтрации")
     private List<String> filterFields;
 
-    @Parameter(names = "--filter-value", variableArity = true)
+    @Setter
+    @Parameter(names = "--filter-value",
+        variableArity = true,
+        description = "Список значений для фильтрации")
     private List<String> filterValues;
 
-    public static class FormatValidator implements IParameterValidator {
-        private static final List<String> ALLOWED_FORMATS = List.of("markdown", "adoc");
+    public static class FormatConverter implements IStringConverter<Format> {
 
         @Override
-        public void validate(String name, String value) throws IllegalArgumentException {
-            if (!ALLOWED_FORMATS.contains(value)) {
-                throw new IllegalArgumentException(
-                    " ! Неверный формат вывода результата. Доступные форматы: " + ALLOWED_FORMATS);
+        public Format convert(String value) {
+            try {
+                return Format.valueOf(value.trim().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                logger.error("Неверный формат: {}. Доступные форматы: {}", value, Format.getAvailableFormats());
+                logger.warn("Выбран формат вывода по умолчанию: {}", Format.MARKDOWN);
+
+                return Format.MARKDOWN;
             }
         }
     }
@@ -55,7 +77,8 @@ public class CliParams {
                     LocalDate date = LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE);
                     return date.atStartOfDay();
                 } catch (DateTimeParseException ex) {
-                    throw new IllegalArgumentException(" ! Некорректный формат даты: " + value, ex);
+                    logger.error("Некорректный формат даты: {}. Ожидается формат ISO 8601", value);
+                    return null;
                 }
             }
         }
