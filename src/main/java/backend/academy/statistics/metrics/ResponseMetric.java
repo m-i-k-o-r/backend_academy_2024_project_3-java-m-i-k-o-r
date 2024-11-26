@@ -25,17 +25,4 @@ public class ResponseMetric implements Metric {
                 LinkedHashMap::new
             ));
     }
-
-    public Map<Integer, Integer> getErrorStatusCodes() {
-        return statusCodeFrequency.entrySet()
-            .stream()
-            .filter(entry -> entry.getKey() >= 400 && entry.getKey() < 600)
-            .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
-            .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                Map.Entry::getValue,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new
-            ));
-    }
 }

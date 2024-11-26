@@ -1,9 +1,11 @@
 package backend.academy.report.sections;
 
-import backend.academy.report.Formatter;
 import backend.academy.statistics.LogStatistics;
 import backend.academy.statistics.metrics.BasicMetrics;
+import backend.academy.utils.Formatter;
 import java.util.List;
+import static backend.academy.utils.Constants.PERCENTILE_50;
+import static backend.academy.utils.Constants.PERCENTILE_95;
 
 public class GeneralInfoSection extends Section {
     @Override
@@ -23,8 +25,8 @@ public class GeneralInfoSection extends Section {
             List.of("Файл", Formatter.formatLink(statistics.source())),
             List.of("Количество запросов", Formatter.formatNum(metric.totalRequests())),
             List.of("Средний размер ответа", Formatter.formatNum(metric.averageResponseSize()) + " b"),
-            List.of("95p размера ответа", Formatter.formatNum(metric.getPercentile(95)) + " b"),
-            List.of("50p размера ответа", Formatter.formatNum(metric.getPercentile(50)) + " b")
+            List.of("95p размера ответа", Formatter.formatNum(metric.getPercentile(PERCENTILE_95)) + " b"),
+            List.of("50p размера ответа", Formatter.formatNum(metric.getPercentile(PERCENTILE_50)) + " b")
         );
     }
 }

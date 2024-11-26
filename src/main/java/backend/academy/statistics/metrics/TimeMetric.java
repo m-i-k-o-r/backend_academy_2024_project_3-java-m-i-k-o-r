@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import static backend.academy.utils.Constants.HTTP_ERROR_STATUS_MAX;
+import static backend.academy.utils.Constants.HTTP_ERROR_STATUS_MIN;
 
 public class TimeMetric implements Metric {
     private final Map<LocalDateTime, Integer> hourlyRequestCount = new HashMap<>();
@@ -32,7 +34,7 @@ public class TimeMetric implements Metric {
     }
 
     private boolean isErrorStatus(int status) {
-        return (status >= 400 && status < 600);
+        return status >= HTTP_ERROR_STATUS_MIN && status <= HTTP_ERROR_STATUS_MAX;
     }
 
     public LocalDate getDayWithMostRequests() {

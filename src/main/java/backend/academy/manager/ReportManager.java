@@ -7,11 +7,14 @@ import backend.academy.statistics.LogStatistics;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import static backend.academy.utils.Constants.EXCLUSION_DETAILS;
 
+@UtilityClass
 public class ReportManager {
-    private static final Logger logger = LogManager.getLogger(ReportManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(ReportManager.class);
 
     public static void generateReports(List<LogStatistics> statistics, Format format) {
         for (LogStatistics statistic : statistics) {
@@ -29,12 +32,16 @@ public class ReportManager {
                         break;
                     }
                     default: {
-                        logger.warn("Неподдерживаемый формат отчета: {}", format);
+                        throw new IllegalAccessException("Неподдерживаемый формат отчета: " + format);
                     }
                 }
+
+                LOGGER.info("Создание отчета успешно завершено. "
+                    + "Файл: '{}'. Источник: '{}'", reportFileName, statistic.source());
+
             } catch (IllegalAccessException e) {
-                logger.warn("Ошибка при генерации отчета: {}", statistic.source());
-                logger.debug("Детали исключения:", e);
+                LOGGER.warn("Ошибка при генерации отчета: {}", statistic.source());
+                LOGGER.debug(EXCLUSION_DETAILS, e);
             }
         }
     }

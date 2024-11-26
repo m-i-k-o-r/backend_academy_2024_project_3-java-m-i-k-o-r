@@ -1,8 +1,8 @@
 package backend.academy.report.sections;
 
-import backend.academy.report.Formatter;
 import backend.academy.statistics.LogStatistics;
 import backend.academy.statistics.metrics.TimeMetric;
+import backend.academy.utils.Formatter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,16 +49,15 @@ public class MostActiveDaySection extends Section {
 
         int maxRequests = hourlyRequests.values().stream().max(Integer::compareTo).orElse(1);
 
-        List<List<String>> rows = new ArrayList<>();
+        List<List<String>> rows = new ArrayList<>(hourlyRequests.size());
         for (LocalDateTime time : hourlyRequests.keySet()) {
             int requests = hourlyRequests.getOrDefault(time, 0);
             int errors = hourlyErrors.getOrDefault(time, 0);
 
-            String requestBar = generateBar(requests, maxRequests);
-            String errorBar = generateBar(errors, maxRequests);
-            int errorPercent = requests != 0
-                ? (errors * 100) / requests
-                : 0;
+            String requestBar = Formatter.generateBar(requests, maxRequests);
+            String errorBar = Formatter.generateBar(errors, maxRequests);
+
+            int errorPercent = Formatter.calculatePercentage(errors, requests);
 
             rows.add(List.of(
                 time.format(DateTimeFormatter.ofPattern("HH:mm")),
@@ -71,13 +70,5 @@ public class MostActiveDaySection extends Section {
         }
 
         return rows;
-    }
-
-    private String generateBar(int value, int max) {
-        if (max == 0) {
-            return "";
-        }
-        int length = (int) Math.round((double) value / max * 20);
-        return "█".repeat(length) + "░".repeat(20 - length);
     }
 }

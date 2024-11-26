@@ -1,9 +1,10 @@
 package backend.academy.report.sections;
 
-import backend.academy.report.Formatter;
 import backend.academy.statistics.LogStatistics;
 import backend.academy.statistics.metrics.UserActivityMetric;
+import backend.academy.utils.Formatter;
 import java.util.List;
+import static backend.academy.utils.Constants.TOP_FIVE;
 
 public class UserActivitySection extends Section {
     @Override
@@ -27,7 +28,7 @@ public class UserActivitySection extends Section {
     @Override
     protected List<List<String>> prepareRows(LogStatistics statistics) {
         UserActivityMetric metrics = statistics.getMetric(UserActivityMetric.class);
-        return metrics.getTopActiveUsers(5).entrySet().stream()
+        return metrics.getTopActiveUsers(TOP_FIVE).entrySet().stream()
             .map(entry -> List.of(Formatter.formatCode(entry.getKey()), Formatter.formatNum(entry.getValue())))
             .toList();
     }

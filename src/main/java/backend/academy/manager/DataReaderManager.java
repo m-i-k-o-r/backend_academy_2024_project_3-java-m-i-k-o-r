@@ -9,36 +9,47 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
+import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@UtilityClass
 public class DataReaderManager {
-    private static final Logger logger = LogManager.getLogger(DataReaderManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(DataReaderManager.class);
 
     public static List<DataReader> createDataReaders(List<String> paths) {
         return paths.stream()
-            .flatMap(path -> {
-                switch (InputTypeDetector.identify(path)) {
-                    case URL:
-                        try {
-                            return Stream.of(new UrlDataReader(URI.create(path).toURL()));
-                        } catch (Exception e) {
-                            logger.error("Ошибка при создании UrlDataReader для пути: {}", path, e);
-                            return Stream.empty();
-                        }
-                    case PATH:
-                        try {
-                            List<Path> matchedPaths = FileFinder.findPaths(path);
-                            return matchedPaths.stream().map(FileDataReader::new);
-                        } catch (Exception e) {
-                            logger.error("Ошибка при создании FileDataReader для пути: {}", path, e);
-                            return Stream.empty();
-                        }
-                    default:
-                        logger.error("Некорректный путь: {}", path);
-                        return Stream.empty();
-                }
-            })
+            .flatMap(DataReaderManager::processPath)
             .toList();
+    }
+
+    private static Stream<DataReader> processPath(String path) {
+        return switch (InputTypeDetector.identify(path)) {
+            case URL -> createUrlDataReader(path);
+            case PATH -> createFileDataReader(path);
+            default -> {
+                LOGGER.error("Некорректный путь: {}", path);
+                yield Stream.empty();
+            }
+        };
+    }
+
+    private static Stream<DataReader> createUrlDataReader(String path) {
+        try {
+            return Stream.of(new UrlDataReader(URI.create(path).toURL()));
+        } catch (Exception e) {
+            LOGGER.error("Ошибка при создании UrlDataReader для пути: {}", path, e);
+            return Stream.empty();
+        }
+    }
+
+    private static Stream<DataReader> createFileDataReader(String path) {
+        try {
+            List<Path> matchedPaths = FileFinder.findPaths(path);
+            return matchedPaths.stream().map(FileDataReader::new);
+        } catch (Exception e) {
+            LOGGER.error("Ошибка при создании FileDataReader для пути: {}", path, e);
+            return Stream.empty();
+        }
     }
 }

@@ -9,14 +9,13 @@ import backend.academy.manager.ReportManager;
 import backend.academy.manager.StatisticsManager;
 import backend.academy.source.reader.DataReader;
 import backend.academy.statistics.LogStatistics;
-import java.io.IOException;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         CliParams params = new CliParser().parse(args);
         LogFilter logFilter = FilterManager.configureFilters(params);
 

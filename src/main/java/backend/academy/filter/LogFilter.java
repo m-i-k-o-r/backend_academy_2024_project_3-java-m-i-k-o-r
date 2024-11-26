@@ -10,10 +10,11 @@ import java.util.function.Predicate;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import static backend.academy.utils.Constants.EXCLUSION_DETAILS;
 
 @Getter
 public class LogFilter {
-    private static final Logger logger = LogManager.getLogger(LogFilter.class);
+    private static final Logger LOGGER = LogManager.getLogger(LogFilter.class);
 
     private final Map<FilterField, Predicate<LogRecord>> filters = new EnumMap<>(FilterField.class);
 
@@ -56,10 +57,10 @@ public class LogFilter {
                 : value.toString();
             filterValues.put(logField, stringValue);
 
-            logger.info("Фильтр успешно добавлен: {} - {}", logField, value);
+            LOGGER.info("Фильтр успешно добавлен: {} - {}", logField, value);
         } catch (IllegalArgumentException e) {
-            logger.error("Ошибка при добавлении фильтра: {} - {}", logField, value);
-            logger.debug("Детали исключения:", e);
+            LOGGER.error("Ошибка при добавлении фильтра: {} - {}", logField, value);
+            LOGGER.debug(EXCLUSION_DETAILS, e);
         }
     }
 
@@ -69,8 +70,8 @@ public class LogFilter {
                 FilterField.valueOf(field.trim().toUpperCase())
             );
         } catch (IllegalArgumentException e) {
-            logger.error("Фильтр не добавлен. Неизвестный фильтр: {}. Ошибка: {}", field, e.getMessage());
-            logger.debug("Детали исключения:", e);
+            LOGGER.error("Фильтр не добавлен. Неизвестный фильтр: {}. Ошибка: {}", field, e.getMessage());
+            LOGGER.debug(EXCLUSION_DETAILS, e);
             return Optional.empty();
         }
     }

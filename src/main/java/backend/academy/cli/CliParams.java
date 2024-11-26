@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 @Getter
 @ToString
 public class CliParams {
-    private static final Logger logger = LogManager.getLogger(CliParams.class);
+    private static final Logger LOGGER = LogManager.getLogger(CliParams.class);
 
     @Parameter(names = "--path",
         required = true,
@@ -58,8 +58,8 @@ public class CliParams {
             try {
                 return Format.valueOf(value.trim().toUpperCase());
             } catch (IllegalArgumentException e) {
-                logger.error("Неверный формат: {}. Доступные форматы: {}", value, Format.getAvailableFormats());
-                logger.warn("Выбран формат вывода по умолчанию: {}", Format.MARKDOWN);
+                LOGGER.error("Неверный формат: {}. Доступные форматы: {}", value, Format.getAvailableFormats());
+                LOGGER.warn("Выбран формат вывода по умолчанию: {}", Format.MARKDOWN);
 
                 return Format.MARKDOWN;
             }
@@ -77,7 +77,7 @@ public class CliParams {
                     LocalDate date = LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE);
                     return date.atStartOfDay();
                 } catch (DateTimeParseException ex) {
-                    logger.error("Некорректный формат даты: {}. Ожидается формат ISO 8601", value);
+                    LOGGER.error("Некорректный формат даты: {}. Ожидается формат ISO 8601", value);
                     return null;
                 }
             }

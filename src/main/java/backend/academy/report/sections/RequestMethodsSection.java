@@ -1,8 +1,8 @@
 package backend.academy.report.sections;
 
-import backend.academy.report.Formatter;
 import backend.academy.statistics.LogStatistics;
 import backend.academy.statistics.metrics.RequestMetrics;
+import backend.academy.utils.Formatter;
 import java.util.List;
 
 public class RequestMethodsSection extends Section {

@@ -1,8 +1,8 @@
 package backend.academy.report.sections;
 
-import backend.academy.report.Formatter;
 import backend.academy.statistics.LogStatistics;
 import backend.academy.statistics.metrics.ResponseMetric;
+import backend.academy.utils.Formatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,7 @@ public class ResponseCodesSection extends Section {
             int count = entry.getValue();
             String codeName = HttpStatus.getName(code);
 
-            if (codeName.equals("Unknown")) {
+            if (HttpStatus.RARE_STATUS.equals(codeName)) {
                 countUnknown += count;
             } else {
                 rows.add(List.of(String.valueOf(code), codeName, Formatter.formatNum(count)));
@@ -39,13 +39,13 @@ public class ResponseCodesSection extends Section {
         }
 
         if (countUnknown > 0) {
-            rows.add(List.of("Unknown", "-", Formatter.formatNum(countUnknown)));
+            rows.add(List.of(HttpStatus.RARE_STATUS, "-", Formatter.formatNum(countUnknown)));
         }
 
         return rows;
     }
 
-    private static class HttpStatus {
+    private static final class HttpStatus {
         private static final Map<Integer, String> STATUS_NAMES = Map.ofEntries(
             Map.entry(200, "OK"),
             Map.entry(201, "Created"),
@@ -60,8 +60,10 @@ public class ResponseCodesSection extends Section {
             Map.entry(503, "Service Unavailable")
         );
 
+        public static final String RARE_STATUS = "Less common";
+
         public static String getName(int code) {
-            return STATUS_NAMES.getOrDefault(code, "Unknown");
+            return STATUS_NAMES.getOrDefault(code, RARE_STATUS);
         }
     }
 }

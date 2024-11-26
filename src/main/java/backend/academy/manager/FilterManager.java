@@ -5,7 +5,9 @@ import backend.academy.filter.FilterField;
 import backend.academy.filter.LogFilter;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class FilterManager {
     public static LogFilter configureFilters(CliParams params) {
         LogFilter filters = new LogFilter();

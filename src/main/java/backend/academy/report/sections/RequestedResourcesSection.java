@@ -1,9 +1,10 @@
 package backend.academy.report.sections;
 
-import backend.academy.report.Formatter;
 import backend.academy.statistics.LogStatistics;
 import backend.academy.statistics.metrics.RequestMetrics;
+import backend.academy.utils.Formatter;
 import java.util.List;
+import static backend.academy.utils.Constants.TOP_FIVE;
 
 public class RequestedResourcesSection extends Section {
     @Override
@@ -20,7 +21,7 @@ public class RequestedResourcesSection extends Section {
     protected List<List<String>> prepareRows(LogStatistics statistics) {
         RequestMetrics metrics = statistics.getMetric(RequestMetrics.class);
 
-        return metrics.getMostRequestedPaths(5).entrySet().stream()
+        return metrics.getMostRequestedPaths(TOP_FIVE).entrySet().stream()
             .map(entry -> List.of(Formatter.formatCode(entry.getKey()), Formatter.formatNum(entry.getValue())))
             .toList();
     }

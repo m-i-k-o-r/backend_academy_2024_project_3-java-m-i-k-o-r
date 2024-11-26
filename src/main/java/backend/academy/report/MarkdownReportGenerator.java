@@ -3,6 +3,7 @@ package backend.academy.report;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+@SuppressWarnings("MultipleStringLiterals")
 public class MarkdownReportGenerator extends ReportGenerator {
     @Override
     public void writeHeader(BufferedWriter writer, String header) throws IOException {

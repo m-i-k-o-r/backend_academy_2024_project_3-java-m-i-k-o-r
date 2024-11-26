@@ -16,11 +16,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static backend.academy.utils.Constants.EXCLUSION_DETAILS;
 
-public abstract class ReportGenerator {
-    private static final Logger logger = LogManager.getLogger(ReportGenerator.class);
+public abstract class ReportGenerator implements ReportWriter {
 
     private final List<Section> sections = List.of(
         new GeneralInfoSection(),
@@ -37,11 +35,8 @@ public abstract class ReportGenerator {
             for (Section section : sections) {
                 section.write(writer, statistics, this);
             }
-            logger.info("Создание отчета успешно завершено. "
-                + "Файл: '{}', Источник: {}", filename, statistics.source());
         } catch (IOException e) {
-            logger.error("Ошибка при создании отчета: {} Произошла ошибка: {}", filename, e.getMessage());
-            logger.debug("Детали исключения:", e);
+            throw new IllegalAccessException(EXCLUSION_DETAILS + e);
         }
     }
 
@@ -50,9 +45,9 @@ public abstract class ReportGenerator {
     public void writeInfo(BufferedWriter writer, String... headers) throws IOException {
         if (headers.length >= 2) {
             String value = String.join(", ", Arrays.copyOfRange(headers, 1, headers.length));
-            writer.write(String.format("**%s**: %s\n\n", headers[0], value));
+            writer.write(String.format("**%s**: %s%n%n", headers[0], value));
         } else {
-            writer.write(String.format("**%s**: -\n\n", headers[0]));
+            writer.write(String.format("**%s**: -%n%n", headers[0]));
         }
     }
 

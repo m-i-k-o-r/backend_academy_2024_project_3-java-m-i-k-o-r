@@ -12,7 +12,7 @@ public class CliParser {
     private final CliParams cliParams;
     private final JCommander jCommander;
 
-    private static final Logger logger = LogManager.getLogger(CliParser.class);
+    private static final Logger LOGGER = LogManager.getLogger(CliParser.class);
 
     public CliParser() {
         this.cliParams = new CliParams();
@@ -21,17 +21,9 @@ public class CliParser {
             .build();
     }
 
-    public CliParams parse(String[] args) {
-        try {
-            jCommander.parse(args);
-            validateFilters();
-        } catch (ParameterException e) {
-            logger.warn("Ошибка при парсинге: {}", e.getMessage());
-            logger.debug(e);
-
-            printUsage();
-            System.exit(1);
-        }
+    public CliParams parse(String[] args) throws ParameterException {
+        jCommander.parse(args);
+        validateFilters();
         return cliParams;
     }
 
@@ -43,8 +35,8 @@ public class CliParser {
         if ((cliParams.filterFields() == null || cliParams.filterValues() == null)
             || (cliParams.filterFields().size() != cliParams.filterValues().size())) {
 
-            logger.error("Все фильтры были сброшены и заменены на пустые");
-            logger.warn("Размеры массивов filterFields и filterValues не совпадают. "
+            LOGGER.error("Все фильтры были сброшены и заменены на пустые");
+            LOGGER.warn("Размеры массивов filterFields и filterValues не совпадают. "
                 + "filterFields: {}, filterValues: {}", cliParams.filterFields(), cliParams.filterValues());
 
             cliParams.filterFields(Collections.emptyList());
