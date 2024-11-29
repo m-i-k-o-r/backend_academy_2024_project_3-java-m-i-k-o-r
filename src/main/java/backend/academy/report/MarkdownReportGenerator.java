@@ -3,26 +3,38 @@ package backend.academy.report;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-@SuppressWarnings("MultipleStringLiterals")
 public class MarkdownReportGenerator extends ReportGenerator {
+    private static final String HEADER_PREFIX = "## ";
+    private static final String NEWLINE = "\n";
+    private static final String ROW_SEPARATOR = " | ";
+    private static final String LINE_SEPARATOR = "---";
+
     @Override
     public void writeHeader(BufferedWriter writer, String header) throws IOException {
-        writer.write("## " + header + "\n\n");
+        writer.write(HEADER_PREFIX + header + NEWLINE.repeat(2));
     }
 
     @Override
     public void writeTableHeader(BufferedWriter writer, String... headers) throws IOException {
-        writer.write("| " + String.join(" | ", headers) + " |\n");
-        writer.write("|" + "---|".repeat(headers.length) + "\n");
+        writer.write(formatRow(headers) + NEWLINE);
+        writer.write(formatSeparator(headers.length) + NEWLINE);
     }
 
     @Override
     public void writeTableRow(BufferedWriter writer, String... cells) throws IOException {
-        writer.write("| " + String.join(" | ", cells) + " |\n");
+        writer.write(formatRow(cells) + NEWLINE);
     }
 
     @Override
     public void writeTableEnd(BufferedWriter writer) throws IOException {
-        writer.write("---\n");
+        writer.write(LINE_SEPARATOR + NEWLINE);
+    }
+
+    private String formatRow(String... cells) {
+        return ROW_SEPARATOR + String.join(ROW_SEPARATOR, cells) + ROW_SEPARATOR;
+    }
+
+    private String formatSeparator(int columnCount) {
+        return ROW_SEPARATOR + (LINE_SEPARATOR + ROW_SEPARATOR).repeat(columnCount);
     }
 }

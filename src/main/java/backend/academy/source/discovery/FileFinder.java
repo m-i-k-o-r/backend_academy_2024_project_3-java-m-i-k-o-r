@@ -11,21 +11,24 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class FileFinder {
-    public static List<Path> findPaths(String path) {
-        String searchLocation = path.split("(?<=^|/)(?=[^/])")[0];
+    public static List<Path> findPaths(String path) throws IOException {
+        Path searchLocation = Paths.get("").toRealPath();
         String globPattern = "glob:" + path;
 
         final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher(globPattern);
         List<Path> matchedPaths = new ArrayList<>();
 
         try {
-            Files.walkFileTree(Paths.get(searchLocation), new SimpleFileVisitor<>() {
+            Files.walkFileTree(searchLocation, new SimpleFileVisitor<>() {
 
                 @Override
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
-                    if (pathMatcher.matches(path)) {
+                    Path relativePath = searchLocation.relativize(path);
+                    if (pathMatcher.matches(relativePath)) {
                         matchedPaths.add(path);
                     }
                     return FileVisitResult.CONTINUE;
@@ -37,7 +40,7 @@ public class FileFinder {
                 }
             });
         } catch (IOException e) {
-            throw new IllegalArgumentException("Ошибка при обходе дерева файлов: " + e.getMessage());
+            throw new IllegalArgumentException("Ошибка при обходе дерева файлов: ", e);
         }
 
         return matchedPaths;

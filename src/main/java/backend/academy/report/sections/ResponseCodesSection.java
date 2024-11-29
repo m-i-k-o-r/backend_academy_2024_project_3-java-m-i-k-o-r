@@ -2,10 +2,10 @@ package backend.academy.report.sections;
 
 import backend.academy.statistics.LogStatistics;
 import backend.academy.statistics.metrics.ResponseMetric;
-import backend.academy.utils.Formatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import static backend.academy.utils.Formatter.formatNum;
 
 public class ResponseCodesSection extends Section {
     @Override
@@ -34,12 +34,12 @@ public class ResponseCodesSection extends Section {
             if (HttpStatus.RARE_STATUS.equals(codeName)) {
                 countUnknown += count;
             } else {
-                rows.add(List.of(String.valueOf(code), codeName, Formatter.formatNum(count)));
+                rows.add(List.of(String.valueOf(code), codeName, formatNum(count)));
             }
         }
 
         if (countUnknown > 0) {
-            rows.add(List.of(HttpStatus.RARE_STATUS, "-", Formatter.formatNum(countUnknown)));
+            rows.add(List.of(HttpStatus.RARE_STATUS, "-", formatNum(countUnknown)));
         }
 
         return rows;

@@ -1,6 +1,7 @@
 package backend.academy.utils;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -17,6 +18,15 @@ public class Formatter {
 
     public static String formatLink(String string) {
         return formatCode(string.substring(string.lastIndexOf('/') + 1).replace("%20", " "));
+    }
+
+    public static String formatHeaders(String... headers) {
+        if (headers.length >= 2) {
+            String value = String.join(", ", Arrays.copyOfRange(headers, 1, headers.length));
+            return String.format("**%s**: %s%n%n", headers[0], value);
+        } else {
+            return String.format("**%s**: -%n%n", headers[0]);
+        }
     }
 
     private static final int LENGTH_BAR = 20;

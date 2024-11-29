@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystems;
-import java.util.regex.Pattern;
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,8 +20,6 @@ public class InputTypeDetector {
     }
 
     private static final Logger LOGGER = LogManager.getLogger(InputTypeDetector.class);
-
-    private static final Pattern PATH_PATTERN = Pattern.compile("^[A-Za-z]:/|^\\./|^[*?\\[\\]]");
 
     public static InputType identify(String input) {
         if (isValidUrl(input)) {
@@ -42,15 +39,12 @@ public class InputTypeDetector {
             URL url = new URI(input).toURL();
             String protocol = url.getProtocol();
             return HTTP.equals(protocol) || HTTPS.equals(protocol);
-        } catch (URISyntaxException | MalformedURLException e) {
+        } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             return false;
         }
     }
 
     private static boolean isValidPath(String input) {
-        if (!PATH_PATTERN.matcher(input).matches()) {
-            return false;
-        }
         try {
             FileSystems.getDefault().getPathMatcher("glob:" + input);
             return true;

@@ -46,6 +46,7 @@ public class DataReaderManager {
     private static Stream<DataReader> createFileDataReader(String path) {
         try {
             List<Path> matchedPaths = FileFinder.findPaths(path);
+            LOGGER.debug("Обнаружено файлов: {}", matchedPaths.size());
             return matchedPaths.stream().map(FileDataReader::new);
         } catch (Exception e) {
             LOGGER.error("Ошибка при создании FileDataReader для пути: {}", path, e);

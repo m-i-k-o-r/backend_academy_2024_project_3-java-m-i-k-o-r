@@ -2,13 +2,15 @@ package backend.academy.report.sections;
 
 import backend.academy.statistics.LogStatistics;
 import backend.academy.statistics.metrics.TimeMetric;
-import backend.academy.utils.Formatter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import static backend.academy.utils.Formatter.calculatePercentage;
+import static backend.academy.utils.Formatter.formatNum;
+import static backend.academy.utils.Formatter.generateBar;
 
 public class MostActiveDaySection extends Section {
     @Override
@@ -26,7 +28,7 @@ public class MostActiveDaySection extends Section {
 
         return List.of(
             List.of("День с наибольшей активностью", mostActiveDay.format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"))),
-            List.of("Корреляция", Formatter.formatNum(metric.calculateCorrelation(mostActiveDay)))
+            List.of("Корреляция", formatNum(metric.calculateCorrelation(mostActiveDay)))
         );
     }
 
@@ -54,10 +56,10 @@ public class MostActiveDaySection extends Section {
             int requests = hourlyRequests.getOrDefault(time, 0);
             int errors = hourlyErrors.getOrDefault(time, 0);
 
-            String requestBar = Formatter.generateBar(requests, maxRequests);
-            String errorBar = Formatter.generateBar(errors, maxRequests);
+            String requestBar = generateBar(requests, maxRequests);
+            String errorBar = generateBar(errors, maxRequests);
 
-            int errorPercent = Formatter.calculatePercentage(errors, requests);
+            int errorPercent = calculatePercentage(errors, requests);
 
             rows.add(List.of(
                 time.format(DateTimeFormatter.ofPattern("HH:mm")),

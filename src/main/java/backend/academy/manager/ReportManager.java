@@ -4,6 +4,7 @@ import backend.academy.cli.Format;
 import backend.academy.report.AsciiDocReportGenerator;
 import backend.academy.report.MarkdownReportGenerator;
 import backend.academy.statistics.LogStatistics;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -32,14 +33,14 @@ public class ReportManager {
                         break;
                     }
                     default: {
-                        throw new IllegalAccessException("Неподдерживаемый формат отчета: " + format);
+                        throw new IOException("Неподдерживаемый формат отчета: " + format);
                     }
                 }
 
                 LOGGER.info("Создание отчета успешно завершено. "
                     + "Файл: '{}'. Источник: '{}'", reportFileName, statistic.source());
 
-            } catch (IllegalAccessException e) {
+            } catch (IOException e) {
                 LOGGER.warn("Ошибка при генерации отчета: {}", statistic.source());
                 LOGGER.debug(EXCLUSION_DETAILS, e);
             }

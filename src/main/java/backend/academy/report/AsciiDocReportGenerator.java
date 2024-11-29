@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("MultipleStringLiterals")
 public class AsciiDocReportGenerator extends ReportGenerator {
     @Override
     public void writeHeader(BufferedWriter writer, String header) throws IOException {
