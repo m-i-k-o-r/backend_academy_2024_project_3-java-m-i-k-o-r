@@ -9,6 +9,7 @@ import backend.academy.manager.ReportManager;
 import backend.academy.manager.StatisticsManager;
 import backend.academy.source.reader.DataReader;
 import backend.academy.statistics.LogStatistics;
+import com.beust.jcommander.ParameterException;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 
@@ -16,7 +17,15 @@ import lombok.experimental.UtilityClass;
 public class Main {
 
     public static void main(String[] args) {
-        CliParams params = new CliParser().parse(args);
+        CliParser cliParser = new CliParser();
+        CliParams params;
+        try {
+            params = cliParser.parse(args);
+        } catch (ParameterException e) {
+            cliParser.printUsage();
+            return;
+        }
+
         LogFilter logFilter = FilterManager.configureFilters(params);
 
         List<DataReader> dataReaders = DataReaderManager.createDataReaders(params.paths());

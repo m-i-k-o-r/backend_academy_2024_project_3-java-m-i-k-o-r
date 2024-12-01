@@ -12,6 +12,10 @@ public class StringFilterStrategy implements LogFilterStrategy<String> {
 
     @Override
     public Predicate<LogRecord> createPredicate(String value) {
+        if (field == FilterField.FROM || field == FilterField.TO) {
+            throw new IllegalArgumentException("Фильтр по значению не доступен для полей 'FROM' и 'TO'");
+        }
+
         Pattern pattern;
         try {
             pattern = Pattern.compile(value);
@@ -22,7 +26,7 @@ public class StringFilterStrategy implements LogFilterStrategy<String> {
         return logRecord -> {
             try {
                 String valueRecord = getFieldValue(logRecord);
-                return pattern.matcher(valueRecord).matches();
+                return pattern.matcher(valueRecord).find();
             } catch (IllegalArgumentException e) {
                 return false;
             }

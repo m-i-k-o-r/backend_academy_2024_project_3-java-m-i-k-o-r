@@ -1,54 +1,16 @@
 package backend.academy.report;
 
-import backend.academy.report.sections.FilterSection;
-import backend.academy.report.sections.GeneralInfoSection;
-import backend.academy.report.sections.MostActiveDaySection;
-import backend.academy.report.sections.RequestMethodsSection;
-import backend.academy.report.sections.RequestedResourcesSection;
-import backend.academy.report.sections.ResponseCodesSection;
-import backend.academy.report.sections.Section;
-import backend.academy.report.sections.UserActivitySection;
-import backend.academy.statistics.LogStatistics;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import static backend.academy.utils.Formatter.formatHeaders;
 
-public abstract class ReportGenerator implements ReportWriter {
+public interface ReportGenerator {
+    void writeHeader(BufferedWriter writer, String header) throws IOException;
 
-    private final List<Section> sections = List.of(
-        new GeneralInfoSection(),
-        new FilterSection(),
-        new RequestedResourcesSection(),
-        new ResponseCodesSection(),
-        new RequestMethodsSection(),
-        new UserActivitySection(),
-        new MostActiveDaySection()
-    );
+    void writeInfo(BufferedWriter writer, String... cells) throws IOException;
 
-    public void generateReport(String filename, LogStatistics statistics) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(Path.of(filename), StandardCharsets.UTF_8)) {
-            for (Section section : sections) {
-                section.write(writer, statistics, this);
-            }
-        } catch (IOException e) {
-            throw new IOException(e);
-        }
-    }
+    void writeTableHeader(BufferedWriter writer, String... headers) throws IOException;
 
-    public abstract void writeHeader(BufferedWriter writer, String header) throws IOException;
+    void writeTableRow(BufferedWriter writer, String... cells) throws IOException;
 
-    public void writeInfo(BufferedWriter writer, String... headers) throws IOException {
-        String formattedString = formatHeaders(headers);
-        writer.write(formattedString);
-    }
-
-    public abstract void writeTableHeader(BufferedWriter writer, String... headers) throws IOException;
-
-    public abstract void writeTableRow(BufferedWriter writer, String... cells) throws IOException;
-
-    public abstract void writeTableEnd(BufferedWriter writer) throws IOException;
+    void writeTableEnd(BufferedWriter writer) throws IOException;
 }

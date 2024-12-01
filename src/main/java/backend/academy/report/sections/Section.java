@@ -1,6 +1,6 @@
 package backend.academy.report.sections;
 
-import backend.academy.report.ReportWriter;
+import backend.academy.report.ReportGenerator;
 import backend.academy.statistics.LogStatistics;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -8,21 +8,25 @@ import java.util.List;
 
 public abstract class Section {
 
-    public void write(BufferedWriter writer, LogStatistics statistics, ReportWriter reportWriter) throws IOException {
+    public void write(
+        BufferedWriter writer,
+        LogStatistics statistics,
+        ReportGenerator reportGenerator
+    ) throws IOException {
 
-        reportWriter.writeHeader(writer, getHeader());
+        reportGenerator.writeHeader(writer, getHeader());
 
         for (List<String> row : prepareInfo(statistics)) {
-            reportWriter.writeInfo(writer, listToArray(row));
+            reportGenerator.writeInfo(writer, listToArray(row));
         }
 
-        reportWriter.writeTableHeader(writer, listToArray(getTableHeaders()));
+        reportGenerator.writeTableHeader(writer, listToArray(getTableHeaders()));
 
         for (List<String> row : prepareRows(statistics)) {
-            reportWriter.writeTableRow(writer, listToArray(row));
+            reportGenerator.writeTableRow(writer, listToArray(row));
         }
 
-        reportWriter.writeTableEnd(writer);
+        reportGenerator.writeTableEnd(writer);
     }
 
     protected abstract String getHeader();

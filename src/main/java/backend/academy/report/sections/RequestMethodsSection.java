@@ -20,8 +20,14 @@ public class RequestMethodsSection extends Section {
     protected List<List<String>> prepareRows(LogStatistics statistics) {
         RequestMetrics metrics = statistics.getMetric(RequestMetrics.class);
 
-        return metrics.getMethodFrequency().entrySet().stream()
+        List<List<String>> methodFrequency = metrics.getMethodFrequency().entrySet().stream()
             .map(entry -> List.of(entry.getKey(), formatNum(entry.getValue())))
             .toList();
+
+        if (methodFrequency.isEmpty()) {
+            return List.of(List.of("-", "-"));
+        }
+
+        return methodFrequency;
     }
 }

@@ -22,8 +22,14 @@ public class RequestedResourcesSection extends Section {
     protected List<List<String>> prepareRows(LogStatistics statistics) {
         RequestMetrics metrics = statistics.getMetric(RequestMetrics.class);
 
-        return metrics.getMostRequestedPaths(TOP_FIVE).entrySet().stream()
+        List<List<String>> mostRequestedPaths = metrics.getMostRequestedPaths(TOP_FIVE).entrySet().stream()
             .map(entry -> List.of(formatCode(entry.getKey()), formatNum(entry.getValue())))
             .toList();
+
+        if (mostRequestedPaths.isEmpty()) {
+            return List.of(List.of("-", "-"));
+        }
+
+        return mostRequestedPaths;
     }
 }

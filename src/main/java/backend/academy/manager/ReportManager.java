@@ -3,6 +3,7 @@ package backend.academy.manager;
 import backend.academy.cli.Format;
 import backend.academy.report.AsciiDocReportGenerator;
 import backend.academy.report.MarkdownReportGenerator;
+import backend.academy.report.ReportFormat;
 import backend.academy.statistics.LogStatistics;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -20,22 +21,23 @@ public class ReportManager {
     public static void generateReports(List<LogStatistics> statistics, Format format) {
         for (LogStatistics statistic : statistics) {
             try {
-                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM_HH-mm-ss-SSS"));
-                String reportFileName = "report_" + timestamp + format.label();
-
+                ReportFormat report;
                 switch (format) {
                     case MARKDOWN: {
-                        new MarkdownReportGenerator().generateReport(reportFileName, statistic);
+                        report = new ReportFormat(new MarkdownReportGenerator());
                         break;
                     }
                     case ADOC: {
-                        new AsciiDocReportGenerator().generateReport(reportFileName, statistic);
+                        report = new ReportFormat(new AsciiDocReportGenerator());
                         break;
                     }
                     default: {
                         throw new IOException("Неподдерживаемый формат отчета: " + format);
                     }
                 }
+                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM_HH-mm-ss-SSS"));
+                String reportFileName = "report_" + timestamp + format.label();
+                report.generateReport(reportFileName, statistic);
 
                 LOGGER.info("Создание отчета успешно завершено. "
                     + "Файл: '{}'. Источник: '{}'", reportFileName, statistic.source());

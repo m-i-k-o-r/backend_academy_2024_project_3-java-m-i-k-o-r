@@ -1,5 +1,6 @@
 package backend.academy.source.discovery;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -15,12 +16,29 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class FileFinder {
-    public static List<Path> findPaths(String path) throws IOException {
-        Path searchLocation = Paths.get("").toRealPath();
-        String globPattern = "glob:" + path;
+    @SuppressFBWarnings
+    public static List<Path> findPaths(String basePath, String pattern) throws IOException {
+        Path searchLocation = Paths.get(basePath).toRealPath();
 
-        final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher(globPattern);
+        return findPathsInDirectory(searchLocation, pattern);
+    }
+
+    public static List<Path> findPaths(String pattern) throws IOException {
+        Path searchLocation = Paths.get("").toRealPath();
+
+        return findPathsInDirectory(searchLocation, pattern);
+    }
+
+    private static List<Path> findPathsInDirectory(Path searchLocation, String pattern) {
+        String globPattern = "glob:" + pattern;
         List<Path> matchedPaths = new ArrayList<>();
+
+        PathMatcher pathMatcher;
+        try {
+            pathMatcher = FileSystems.getDefault().getPathMatcher(globPattern);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Некорректный шаблон пути: " + globPattern, e);
+        }
 
         try {
             Files.walkFileTree(searchLocation, new SimpleFileVisitor<>() {

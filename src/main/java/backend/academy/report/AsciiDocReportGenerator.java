@@ -4,11 +4,17 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import static backend.academy.utils.Formatter.formatHeaders;
 
-public class AsciiDocReportGenerator extends ReportGenerator {
+public class AsciiDocReportGenerator implements ReportGenerator {
     @Override
     public void writeHeader(BufferedWriter writer, String header) throws IOException {
         writer.write("### " + header + "\n\n");
+    }
+
+    @Override
+    public void writeInfo(BufferedWriter writer, String... cells) throws IOException {
+        writer.write(formatHeaders(cells));
     }
 
     @Override

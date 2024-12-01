@@ -2,8 +2,9 @@ package backend.academy.report;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import static backend.academy.utils.Formatter.formatHeaders;
 
-public class MarkdownReportGenerator extends ReportGenerator {
+public class MarkdownReportGenerator implements ReportGenerator {
     private static final String HEADER_PREFIX = "## ";
     private static final String NEWLINE = "\n";
     private static final String ROW_SEPARATOR = " | ";
@@ -12,6 +13,11 @@ public class MarkdownReportGenerator extends ReportGenerator {
     @Override
     public void writeHeader(BufferedWriter writer, String header) throws IOException {
         writer.write(HEADER_PREFIX + header + NEWLINE.repeat(2));
+    }
+
+    @Override
+    public void writeInfo(BufferedWriter writer, String... cells) throws IOException {
+        writer.write(formatHeaders(cells));
     }
 
     @Override

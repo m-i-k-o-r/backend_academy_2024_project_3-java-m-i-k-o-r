@@ -19,9 +19,7 @@ public abstract class DataReader {
             while ((line = in.readLine()) != null) {
                 LogRecord entry = LogParser.parseLogLine(line);
 
-                if (filter.matches(entry)) {
-                    statistics.update(entry);
-                }
+                statistics.update(entry);
             }
         } catch (IOException e) {
             throw new RuntimeException("Ошибка при чтении данных из источника: " + getSource(), e);

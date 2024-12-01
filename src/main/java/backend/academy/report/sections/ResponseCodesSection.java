@@ -23,6 +23,10 @@ public class ResponseCodesSection extends Section {
         ResponseMetric metric = statistics.getMetric(ResponseMetric.class);
         Map<Integer, Integer> statusCodeFrequency = metric.getStatusCodeFrequency();
 
+        if (statusCodeFrequency.isEmpty()) {
+            return List.of(List.of("-", "-", "-"));
+        }
+
         List<List<String>> rows = new ArrayList<>();
         int countUnknown = 0;
 

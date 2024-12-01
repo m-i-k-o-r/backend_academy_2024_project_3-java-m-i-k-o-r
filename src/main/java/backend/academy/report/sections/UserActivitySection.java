@@ -29,8 +29,15 @@ public class UserActivitySection extends Section {
     @Override
     protected List<List<String>> prepareRows(LogStatistics statistics) {
         UserActivityMetric metrics = statistics.getMetric(UserActivityMetric.class);
-        return metrics.getTopActiveUsers(TOP_FIVE).entrySet().stream()
+
+        List<List<String>> mostActiveUsers = metrics.getTopActiveUsers(TOP_FIVE).entrySet().stream()
             .map(entry -> List.of(formatCode(entry.getKey()), formatNum(entry.getValue())))
             .toList();
+
+        if (mostActiveUsers.isEmpty()) {
+            return List.of(List.of("-", "-"));
+        }
+
+        return mostActiveUsers;
     }
 }

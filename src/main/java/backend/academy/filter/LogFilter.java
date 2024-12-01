@@ -50,12 +50,12 @@ public class LogFilter {
     private <T> void addFilterInternal(FilterField logField, T value, LogFilterStrategy<T> strategy) {
         try {
             Predicate<LogRecord> predicate = strategy.createPredicate(value);
-            filters.put(logField, predicate);
+            filters.merge(logField, predicate, Predicate::or);
 
             String stringValue = value instanceof LocalDateTime
                 ? ((LocalDateTime) value).format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss"))
                 : value.toString();
-            filterValues.put(logField, stringValue);
+            filterValues.merge(logField, stringValue, (oldValue, newValue) -> oldValue + ", " + newValue);
 
             LOGGER.info("Фильтр успешно добавлен: {} - {}", logField, value);
         } catch (IllegalArgumentException e) {
