@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import static backend.academy.utils.Formatter.formatHeaders;
 
+/**
+ * Реализация {@link ReportGenerator} для генерации отчетов в формате AsciiDoc
+ */
 public class AsciiDocReportGenerator implements ReportGenerator {
     @Override
     public void writeHeader(BufferedWriter writer, String header) throws IOException {

@@ -4,6 +4,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import static backend.academy.utils.Formatter.formatHeaders;
 
+/**
+ * Реализация {@link ReportGenerator} для генерации отчетов в формате Markdown
+ */
 public class MarkdownReportGenerator implements ReportGenerator {
     private static final String HEADER_PREFIX = "## ";
     private static final String NEWLINE = "\n";

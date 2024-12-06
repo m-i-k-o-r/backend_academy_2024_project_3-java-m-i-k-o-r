@@ -11,8 +11,17 @@ import org.apache.logging.log4j.Logger;
 import static backend.academy.utils.Constants.HTTP;
 import static backend.academy.utils.Constants.HTTPS;
 
+/**
+ * Утилитарный класс для определения типа входных данных
+ * <br>
+ * Этот класс позволяет определить, является ли входная строка URL, путем или она недействительна
+ */
 @UtilityClass
 public class InputTypeDetector {
+
+    /**
+     * Типы входных данных
+     */
     public enum InputType {
         URL,
         PATH,
@@ -21,6 +30,12 @@ public class InputTypeDetector {
 
     private static final Logger LOGGER = LogManager.getLogger(InputTypeDetector.class);
 
+    /**
+     * Определяет тип входной строки
+     *
+     * @param input входная строка
+     * @return тип входных данных: URL, PATH или INVALID
+     */
     public static InputType identify(String input) {
         if (isValidUrl(input)) {
             LOGGER.info("Ввод распознан как URL: '{}'", input);
@@ -34,6 +49,12 @@ public class InputTypeDetector {
         return InputType.INVALID;
     }
 
+    /**
+     * Проверяет, является ли строка URL
+     *
+     * @param input строка для проверки
+     * @return true, если строка является URL, иначе false
+     */
     private static boolean isValidUrl(String input) {
         try {
             URL url = new URI(input).toURL();
@@ -44,6 +65,12 @@ public class InputTypeDetector {
         }
     }
 
+    /**
+     * Проверяет, является ли строка путем (GLOB выражением)
+     *
+     * @param input строка для проверки
+     * @return true, если строка является путем, иначе false
+     */
     private static boolean isValidPath(String input) {
         try {
             FileSystems.getDefault().getPathMatcher("glob:" + input);

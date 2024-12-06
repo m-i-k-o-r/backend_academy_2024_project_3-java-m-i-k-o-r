@@ -11,6 +11,9 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import lombok.AllArgsConstructor;
 
+/**
+ * Реализация {@link DataReader} для чтения данных из URL
+ */
 @AllArgsConstructor
 public class UrlDataReader extends DataReader {
     private final URL url;

@@ -12,19 +12,52 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static backend.academy.utils.Constants.EXCLUSION_DETAILS;
 
+/**
+ * Класс для фильтрации записей логов на основе заданных условий
+ * <br>
+ * За что отвечает:
+ * <ul>
+ *   <li>создание фильтров для различных полей логов, включая:
+ *       <ul>
+ *           <li> по дате - {@link FilterField#TO} и {@link FilterField#FROM}</li>
+ *           <li> по IP адресу - {@link FilterField#ADDRESS}</li>
+ *           <li> по HTTP методу - {@link FilterField#METHOD}</li>
+ *           <li> по HTTP статусу - {@link FilterField#STATUS}</li>
+ *           <li> по клиентскому устройству - {@link FilterField#AGENT}</li>
+ *       </ul>
+ *   </li>
+ *   <li>проверка, соответствует ли лог заданным фильтрам и условиям</li>
+ * </ul>
+ * <br>
+ * Фильтры представляют собой предикаты (позволяют проверять соответствие лога заданным условиям)
+ */
 @Getter
 public class LogFilter {
     private static final Logger LOGGER = LogManager.getLogger(LogFilter.class);
 
+    /** Карта фильтров по полям, представленных предикатами */
     private final Map<FilterField, Predicate<LogRecord>> filters = new EnumMap<>(FilterField.class);
 
+    /** Карта значений фильтров для хранения их условий в формате строки */
     private final Map<FilterField, String> filterValues = new EnumMap<>(FilterField.class);
 
+    /**
+     * Проверяет, соответствует ли лог всем заданным фильтрам
+     *
+     * @param currentLog текущая запись лога
+     * @return true, если запись удовлетворяет всем фильтрам, иначе false
+     */
     public boolean matches(LogRecord currentLog) {
         return filters.entrySet().stream()
             .allMatch(entry -> entry.getValue().test(currentLog));
     }
 
+    /**
+     * Добавляет фильтр по строковому значению для указанного поля
+     *
+     * @param field имя поля для фильтрации
+     * @param value значение фильтра
+     */
     public void addFilter(String field, String value) {
         parseFilterField(field).ifPresent(
             logField ->
@@ -36,6 +69,12 @@ public class LogFilter {
         );
     }
 
+    /**
+     * Добавляет фильтр по значению даты и времени для указанного поля
+     *
+     * @param field имя поля для фильтрации
+     * @param value значение фильтра (дата и время)
+     */
     public void addFilter(String field, LocalDateTime value) {
         parseFilterField(field).ifPresent(
             logField ->
@@ -47,6 +86,14 @@ public class LogFilter {
         );
     }
 
+    /**
+     * Внутренний метод для добавления фильтра
+     *
+     * @param logField поле для фильтрации
+     * @param value    значение фильтра
+     * @param strategy {@link LogFilterStrategy} (стратегия фильтрации)
+     * @param <T>      тип значения фильтра
+     */
     private <T> void addFilterInternal(FilterField logField, T value, LogFilterStrategy<T> strategy) {
         try {
             Predicate<LogRecord> predicate = strategy.createPredicate(value);
@@ -64,6 +111,12 @@ public class LogFilter {
         }
     }
 
+    /**
+     * Преобразование строки в тип {@link FilterField}
+     *
+     * @param field имя поля
+     * @return {@link Optional}, содержащий {@link FilterField} при нахождении соответствующего типа
+     */
     private Optional<FilterField> parseFilterField(String field) {
         try {
             return Optional.of(

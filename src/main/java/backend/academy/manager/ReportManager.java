@@ -14,10 +14,44 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import static backend.academy.utils.Constants.EXCLUSION_DETAILS;
 
+/**
+ * Утилитный класс для управления процессом создания отчетов
+ * <hr>
+ * Отвечает за выполнение следующих задач:
+ * <ul>
+ *     <li>генерацию отчетов для списка статистики логов:
+ *         <ul>
+ *             <li>в формате <b>Markdown</b></li>
+ *             <li>в формате <b>AsciiDoc</b></li>
+ *         </ul>
+ *     </li>
+ *     <li>создает отчет для каждого объекта статистики</li>
+ *     <li>сохраняет отчет</li>
+ * </ul>
+ */
 @UtilityClass
 public class ReportManager {
     private static final Logger LOGGER = LogManager.getLogger(ReportManager.class);
 
+    /**
+     * Метод принимает список объектов статистики и формат отчета,
+     * создает отчет для каждого объекта статистики и сохраняет его
+     * в файл с названием, которое включает в себя временную метку для уникальности
+     * <hr>
+     * Каждый отчет генерируется с использованием соответствующего генератора:
+     * <ul>
+     *     <li>{@link MarkdownReportGenerator} для формата Markdown {@link Format#MARKDOWN}</li>
+     *     <li>{@link AsciiDocReportGenerator} для формата AsciiDoc {@link Format#ADOC}</li>
+     * </ul>
+     * <hr>
+     * <b>Если при генерации отчета возникает ошибка, она логируется с предупреждением и
+     * подробностями, включая источник данных.
+     * После этого программа прекращает запись в текущий файл и переходит к следующей статистике</b>
+     * <hr>
+     *
+     * @param statistics список объектов {@link LogStatistics}, содержащие статистику для создания отчетов
+     * @param format     формат отчета, {@link Format#MARKDOWN} или {@link Format#ADOC}
+     */
     public static void generateReports(List<LogStatistics> statistics, Format format) {
         for (LogStatistics statistic : statistics) {
             try {

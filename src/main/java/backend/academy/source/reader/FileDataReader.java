@@ -7,6 +7,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import lombok.AllArgsConstructor;
 
+/**
+ * Реализация {@link DataReader} для чтения данных из файла
+ */
 @AllArgsConstructor
 public class FileDataReader extends DataReader {
     private final Path path;

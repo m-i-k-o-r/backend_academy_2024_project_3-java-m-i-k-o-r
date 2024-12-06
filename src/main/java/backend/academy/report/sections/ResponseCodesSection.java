@@ -7,17 +7,45 @@ import java.util.List;
 import java.util.Map;
 import static backend.academy.utils.Formatter.formatNum;
 
+/**
+ * Класс для отображения секции с информацией о кодах ответа HTTP
+ * <br>
+ * Используется для генерации отчета, содержащего таблицу с частотным распределением
+ * кодов ответа, их описаниями (именами) и количеством запросов
+ * <br>
+ * Данные извлекаются из метрики {@link ResponseMetric}.
+ */
 public class ResponseCodesSection extends Section {
     @Override
     protected String getHeader() {
         return "Коды ответа";
     }
 
+    /**
+     * Возвращает заголовки столбцов таблицы секции
+     * <hr>
+     * Таблица содержит следующие столбцы:
+     * <ul>
+     *     <li><b>код</b> - числовой HTTP код ответа</li>
+     *     <li><b>имя</b> - текстовое описание кода ответа</li>
+     *     <li><b>количество</b> - число запросов с этим кодом</li>
+     * </ul>
+     */
     @Override
     protected List<String> getTableHeaders() {
         return List.of("Код", "Имя", "Количество");
     }
 
+    /**
+     * Подготавливает строки таблицы с информацией о кодах ответа HTTP
+     * <hr>
+     * Информация включает код ответа, его имя и количество появлений в логах,
+     * полученных из {@link ResponseMetric#getStatusCodeFrequency()}
+     * <br>
+     * Редкие или неизвестные коды группируются под названием "Less common"
+     * <hr>
+     * Если данных о кодах ответа нет, возвращается строка-заглушка ("-", "-", "-")
+     */
     @Override
     protected List<List<String>> prepareRows(LogStatistics statistics) {
         ResponseMetric metric = statistics.getMetric(ResponseMetric.class);
@@ -49,6 +77,11 @@ public class ResponseCodesSection extends Section {
         return rows;
     }
 
+    /**
+     * Вспомогательный класс для работы с кодами ответа HTTP
+     * <br>
+     * Содержит отображение стандартных HTTP кодов в их текстовые описания
+     */
     private static final class HttpStatus {
         private static final Map<Integer, String> STATUS_NAMES = Map.ofEntries(
             Map.entry(200, "OK"),
@@ -66,6 +99,12 @@ public class ResponseCodesSection extends Section {
 
         public static final String RARE_STATUS = "Less common";
 
+        /**
+         * Возвращает текстовое описание для заданного HTTP кода
+         *
+         * @param code HTTP код ответа
+         * @return текстовое описание или "Less common", если код неизвестен
+         */
         public static String getName(int code) {
             return STATUS_NAMES.getOrDefault(code, RARE_STATUS);
         }

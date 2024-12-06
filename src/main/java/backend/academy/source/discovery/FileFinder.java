@@ -14,8 +14,24 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Утилитарный класс для поиска файлов и директорий по указанному пути и шаблону
+ * <br>
+ * Этот класс предоставляет методы для поиска файлов с использованием GLOB выражений
+ */
 @UtilityClass
 public class FileFinder {
+
+    /**
+     * <b>!!! Данный метод предназначен только для тестов !!!</b>
+     * <hr>
+     * Ищет пути файлов, соответствующих шаблону, начиная с указанной директории
+     *
+     * @param basePath базовая директория для поиска
+     * @param pattern  GLOB шаблон для поиска файлов
+     * @return список путей, которые соответствуют переданному шаблону
+     * @throws IOException если возникает ошибка при доступе к файловой системе
+     */
     @SuppressFBWarnings
     public static List<Path> findPaths(String basePath, String pattern) throws IOException {
         Path searchLocation = Paths.get(basePath).toRealPath();
@@ -23,12 +39,26 @@ public class FileFinder {
         return findPathsInDirectory(searchLocation, pattern);
     }
 
+    /**
+     * Ищет пути файлов, соответствующих шаблону, начиная с текущей директории
+     *
+     * @param pattern GLOB шаблон для поиска файлов
+     * @return список путей, которые соответствуют переданному шаблону
+     * @throws IOException если возникает ошибка при доступе к файловой системе
+     */
     public static List<Path> findPaths(String pattern) throws IOException {
         Path searchLocation = Paths.get("").toRealPath();
 
         return findPathsInDirectory(searchLocation, pattern);
     }
 
+    /**
+     * Вспомогательный метод для поиска файлов, соответствующих шаблону, начиная с <b>указанной</b> директории
+     *
+     * @param searchLocation директория для поиска
+     * @param pattern        GLOB шаблон
+     * @return список путей, которые соответствуют переданному шаблону
+     */
     private static List<Path> findPathsInDirectory(Path searchLocation, String pattern) {
         String globPattern = "glob:" + pattern;
         List<Path> matchedPaths = new ArrayList<>();

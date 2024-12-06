@@ -9,8 +9,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Утилитарный класс для парсинга строк лога
+ * <br>
+ * Этот класс разбирает и преобразовывает строку лога в объекты {@link LogRecord} и {@link HttpRequest}
+ */
 @UtilityClass
 public class LogParser {
+
+    /** Шаблон для разбора строки лога */
     private static final Pattern LOG_PATTERN = Pattern.compile(
         "(?<remoteAddr>\\S+) "
             + "(?<remoteUser>\\S+) "
@@ -22,10 +29,19 @@ public class LogParser {
             + "\"(?<httpUserAgent>.*?)\""
     );
 
+    /** Шаблон для разбора строки HTTP-запроса */
     private static final Pattern REQUEST_PATTERN = Pattern.compile("(?<method>\\S+) (?<path>\\S+) (?<protocol>\\S+)");
 
+    /** Форматтер для разбора даты из лога */
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z");
 
+    /**
+     * Парсит строку лога и преобразует её в объект {@link LogRecord}
+     *
+     * @param logLine строка лога для разбора
+     * @return объект {@link LogRecord}
+     * @throws IllegalArgumentException если строка не соответствует шаблону
+     */
     public static LogRecord parseLogLine(String logLine) throws IllegalArgumentException {
         Matcher matcher = parseWithPattern(LOG_PATTERN, logLine);
 
@@ -41,6 +57,14 @@ public class LogParser {
         );
     }
 
+    /**
+     * Выполняет разбор строки с использованием указанного шаблона
+     *
+     * @param pattern шаблон для разбора
+     * @param input   строка для разбора
+     * @return объект {@link Matcher}
+     * @throws IllegalArgumentException если строка не соответствует шаблону
+     */
     private static Matcher parseWithPattern(Pattern pattern, String input) throws IllegalArgumentException {
         Matcher matcher = pattern.matcher(input);
         if (matcher.matches()) {
@@ -50,6 +74,13 @@ public class LogParser {
         }
     }
 
+    /**
+     * Парсит строку HTTP-запроса и преобразует её в объект {@link HttpRequest}
+     *
+     * @param requestString строка запроса для разбора
+     * @return объект {@link HttpRequest}
+     * @throws IllegalArgumentException если строка не соответствует шаблону запроса
+     */
     private static HttpRequest parseHttpRequest(String requestString) throws IllegalArgumentException {
         try {
             Matcher matcher = parseWithPattern(REQUEST_PATTERN, requestString);
@@ -64,6 +95,13 @@ public class LogParser {
         }
     }
 
+    /**
+     * Парсит строку даты и времени из лога
+     *
+     * @param dateTimeString строка с датой и временем
+     * @return объект {@link LocalDateTime}
+     * @throws IllegalArgumentException если строка не соответствует формату
+     */
     private static LocalDateTime parseDateTime(String dateTimeString) throws IllegalArgumentException {
         try {
             return LocalDateTime.parse(dateTimeString, DATE_TIME_FORMATTER);

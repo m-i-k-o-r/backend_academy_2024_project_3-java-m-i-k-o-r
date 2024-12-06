@@ -12,12 +12,23 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 
+/**
+ * Класс для сбора и обновления статистики логов
+ * <hr>
+ * Этот класс применяет фильтры к логам, собирает метрики и предоставляет их для анализа
+ */
 @Getter
 public class LogStatistics {
     private final String source;
     private final Map<Class<? extends Metric>, Metric> metrics = new HashMap<>();
     private final LogFilter filters;
 
+    /**
+     * Конструктор для инициализации статистики
+     *
+     * @param filters фильтры для фильтрации логов
+     * @param source  источник логов
+     */
     public LogStatistics(LogFilter filters, String source) {
         this.filters = filters;
         this.source = source;
@@ -29,6 +40,11 @@ public class LogStatistics {
         metrics.put(UserActivityMetric.class, new UserActivityMetric());
     }
 
+    /**
+     * Обновляет метрики на основе нового лога
+     *
+     * @param entry запись лога
+     */
     public void update(LogRecord entry) {
         if (!filters.matches(entry)) {
             return;
@@ -38,6 +54,13 @@ public class LogStatistics {
         }
     }
 
+    /**
+     * Возвращает конкретную метрику по её классу
+     *
+     * @param <T>         тип метрики
+     * @param metricClass класс метрики
+     * @return метрика указанного типа
+     */
     public <T extends Metric> T getMetric(Class<T> metricClass) {
         return metricClass.cast(metrics.get(metricClass));
     }

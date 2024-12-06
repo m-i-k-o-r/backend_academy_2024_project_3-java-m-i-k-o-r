@@ -12,9 +12,24 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import static backend.academy.utils.Constants.HTTP_ERROR_STATUS_MAX;
 import static backend.academy.utils.Constants.HTTP_ERROR_STATUS_MIN;
 
+/**
+ * Класс для анализа временных метрик запросов и ошибок
+ * <hr>
+ * Этот класс реализует интерфейс {@link Metric} и отслеживает
+ * количество запросов и ошибок по часам и дням
+ * <hr>
+ * Методы предоставляют возможность анализировать данные по запросам и ошибкам,
+ * а также вычислять корреляцию между ними
+ */
 public class TimeMetric implements Metric {
+
+    /** Карта количества запросов по часам */
     private final Map<LocalDateTime, Integer> hourlyRequestCount = new HashMap<>();
+
+    /** Карта количества запросов по дням */
     private final Map<LocalDate, Integer> dailyRequestCount = new HashMap<>();
+
+    /** Карта количества ошибок по часам */
     private final Map<LocalDateTime, Integer> hourlyErrorCount = new HashMap<>();
 
     @Override
@@ -33,10 +48,21 @@ public class TimeMetric implements Metric {
         }
     }
 
+    /**
+     * Проверяет, является ли статус HTTP ошибочным
+     *
+     * @param status код статуса HTTP
+     * @return true, если статус является ошибочным, иначе false
+     */
     private boolean isErrorStatus(int status) {
         return status >= HTTP_ERROR_STATUS_MIN && status <= HTTP_ERROR_STATUS_MAX;
     }
 
+    /**
+     * Возвращает день с наибольшим количеством запросов
+     *
+     * @return дата с максимальным количеством запросов или null, если данных нет
+     */
     public LocalDate getDayWithMostRequests() {
         return dailyRequestCount.entrySet()
             .stream()
@@ -45,6 +71,13 @@ public class TimeMetric implements Metric {
             .orElse(null);
     }
 
+    /**
+     * Возвращает карту с почасовыми данными для указанной даты
+     *
+     * @param countMap карта данных
+     * @param date     дата для фильтрации
+     * @return отсортированная карта данных за указанный день
+     */
     private Map<LocalDateTime, Integer> getHourlyCountByDate(Map<LocalDateTime, Integer> countMap, LocalDate date) {
         return countMap.entrySet()
             .stream()
@@ -58,14 +91,32 @@ public class TimeMetric implements Metric {
             ));
     }
 
+    /**
+     * Возвращает количество запросов по часам для указанной даты
+     *
+     * @param date дата для анализа
+     * @return карта количества запросов по часам
+     */
     public Map<LocalDateTime, Integer> getHourlyRequestCountByDate(LocalDate date) {
         return getHourlyCountByDate(hourlyRequestCount, date);
     }
 
+    /**
+     * Возвращает количество ошибок по часам для указанной даты
+     *
+     * @param date дата для анализа
+     * @return карта количества ошибок по часам
+     */
     public Map<LocalDateTime, Integer> getHourlyErrorCountByDate(LocalDate date) {
         return getHourlyCountByDate(hourlyErrorCount, date);
     }
 
+    /**
+     * Вычисляет корреляцию между количеством запросов и количеством ошибок за указанный день
+     *
+     * @param date дата для анализа
+     * @return коэффициент корреляции
+     */
     public double calculateCorrelation(LocalDate date) {
         Map<LocalDateTime, Integer> requestMap = getHourlyRequestCountByDate(date);
         Map<LocalDateTime, Integer> errorMap = getHourlyErrorCountByDate(date);
